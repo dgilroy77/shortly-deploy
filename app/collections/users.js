@@ -10,3 +10,4 @@ module.exports = Users;
 
 var hello = 'hello';
 var helloAgain = 'blah';
+var helloA = 'blah';
