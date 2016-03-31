@@ -8,9 +8,9 @@ module.exports = function(grunt) {
       },
       dist: {
           // the files to concatenate
-        src: ['public/**/*.js'],
+        src: ['public/client/**/*.js'],
           // the location of the resulting JS file
-        dest: 'dist/<%= pkg.name %>.js'
+        dest: 'public/dist/<%= pkg.name %>.js'
       }
     },
 
@@ -30,15 +30,31 @@ module.exports = function(grunt) {
     },
 
     uglify: {
+      dist: {
+        files: {
+          'public/dist/<%= pkg.name %>.min.js': ['<%= concat.dist.dest %>']
+        }
+      }
     },
 
     eslint: {
       target: [
         // Add list of files to lint here
+        'public/**/*.js',
+        'Gruntfile.js',
+        'app/**/*.js',
+        'lib/**/*.js',
+        './*.js',
+        'spec/**/*.js'
       ]
     },
 
     cssmin: {
+      dist: {
+        files: {
+          'public/dist/style.min.css': 'public/style.css'
+        }
+      }
     },
 
     watch: {
@@ -60,6 +76,12 @@ module.exports = function(grunt) {
 
     shell: {
       prodServer: {
+        command: 'git push live master',
+        options: {
+          stdout: true,
+          stderr: true,
+          failOnError: true
+        }
       }
     },
   });
@@ -90,6 +112,8 @@ module.exports = function(grunt) {
   grunt.registerTask('upload', function(n) {
     if (grunt.option('prod')) {
       // add your production server task here
+      // upload where?
+      grunt.task.run( ['shell:prodServer'] );
     }
     grunt.task.run([ 'server-dev' ]);
   });
@@ -99,23 +123,31 @@ module.exports = function(grunt) {
   ////////////////////////////////////////////////////
 
   grunt.registerTask('test', [
-    'mochaTest'
+    'eslint', 'mochaTest'
   ]);
 
-  grunt.registerTask('build', [
-  ]);
+  // do we need to add test and lint here??? 
+  grunt.registerTask('build', ['concat', 'uglify', 'cssmin']);
 
   grunt.registerTask('upload', function(n) {
     if (grunt.option('prod')) {
       // add your production server task here
+      grunt.task.run( ['shell:prodServer'] );
     } else {
       grunt.task.run([ 'server-dev' ]);
     }
   });
 
-  grunt.registerTask('deploy', [
-    // add your deploy tasks here
-  ]);
+    // Create a grunt deploy task that utilizes tasks already created 
+    // in order to build and host your app on a local dev server
+    // Add a prod option such that when you run grunt deploy --prod you 
+    // will prepare your code base for production 
+    // and push it up to the production droplet
 
+    // is this the correct way to add test and lint?
+  grunt.registerTask('deploy', [
+    'test', 'build', 'upload'
+  ]);
+    
 
 };
