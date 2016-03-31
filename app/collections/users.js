@@ -9,3 +9,4 @@ Users.model = User;
 module.exports = Users;
 
 var hello = 'hello';
+var helloAgain = 'blah';
