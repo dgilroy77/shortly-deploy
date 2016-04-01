@@ -31,16 +31,11 @@ var linkSchema = mongoose.Schema ({
 
 var Link = mongoose.model('Link', linkSchema);
 
-linkSchema.methods.createShasum = function(url) {
-  var shasum = crypto.createHash('sha1');
-  shasum.update(url);
-  return shasum.digest('hex').slice(0, 5);
-};
-
 //mogoosejs.com/docs/middleware.html
 linkSchema.pre('save', function(next) {
-  var newUrl = createShasum(this.url);
-  this.code = code;
+  var shasum = crypto.createHash('sha1');
+  shasum.update(this.url);
+  this.code = shasum.digest('hex').slice(0, 5);
   next();
 });
 

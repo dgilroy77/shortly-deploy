@@ -1,4 +1,3 @@
-var path = require('path');
 var mongoose = require('mongoose');
 // connect to a MongoDB database (local or hosted)
 mongoURI = 'mongodb://localhost/deploydb';
