@@ -6,6 +6,11 @@ mongoose.connect(mongoURI);
 
 var db = mongoose.connection;
 
+db.on('error', console.error.bind(console, 'Connection error'));
+db.once('open', function() {
+  console.log('Mongodb connnection established');
+});
+
 // var knex = require('knex')({
 //   client: 'sqlite3',
 //   connection: {
